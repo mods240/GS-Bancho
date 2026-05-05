@@ -1,0 +1,18 @@
+{
+  "name": "ガス番長",
+  "short_name": "ガス番長",
+  "description": "ルート上の最安ガソリンスタンドを探すアプリ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

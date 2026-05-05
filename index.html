@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>ガス番長</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=M+PLUS+1:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── SPLASH ── -->
+<div id="splash">
+  <div class="splash-logo">ガス<em>番長</em></div>
+  <div class="splash-sub">ルート上の最安スタンドを探す</div>
+  <div class="splash-spinner"></div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app" class="hidden">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">ガス<em>番長</em></div>
+    <div id="loc-pill" class="loc-pill">
+      <span class="loc-dot"></span>
+      <span id="loc-text">位置取得中…</span>
+    </div>
+  </header>
+
+  <!-- Main card -->
+  <main>
+
+    <!-- Step 1: 目的地入力 -->
+    <section class="card" id="card-dest">
+      <div class="card-label">STEP 1 — 目的地</div>
+      <div class="input-row">
+        <input id="dest-input" type="text" placeholder="例：大阪城、名古屋駅、東京タワー"
+          autocomplete="off" autocorrect="off" spellcheck="false">
+        <button id="dest-clear" class="btn-icon" onclick="clearDest()" style="display:none">✕</button>
+      </div>
+      <div class="hint">※ 地名・住所・ランドマーク何でも可</div>
+    </section>
+
+    <!-- Step 2: アクションボタン -->
+    <section class="action-area">
+      <!-- メインボタン：gogo.gs でルート検索 -->
+      <button class="btn-main" id="btn-gogogs" onclick="openGogoGS()">
+        <span class="btn-icon-lg">⛽</span>
+        <div>
+          <div class="btn-title">ルート上の最安値を探す</div>
+          <div class="btn-desc">gogo.gs で価格マップを開く</div>
+        </div>
+        <span class="btn-arrow">›</span>
+      </button>
+
+      <!-- サブボタン：現在地周辺だけ -->
+      <button class="btn-sub" onclick="openGogoGSNearby()">
+        <span>📍</span> 現在地周辺だけ見る
+      </button>
+    </section>
+
+    <!-- Step 3: スタンド決まったらナビ -->
+    <section class="card" id="card-nav">
+      <div class="card-label">STEP 2 — スタンドが決まったら</div>
+      <div class="nav-input-row">
+        <input id="station-input" type="text" placeholder="スタンド名 or 住所を入力"
+          autocomplete="off">
+        <button class="btn-nav-go" onclick="openMapsNav()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          ナビ開始
+        </button>
+      </div>
+      <div class="hint">gogo.gsで選んだスタンド名をここに入れてナビへ</div>
+    </section>
+
+    <!-- Tips -->
+    <section class="tips-card">
+      <div class="tips-title">💡 使い方のコツ</div>
+      <ol class="tips-list">
+        <li>目的地を入れて「最安値を探す」をタップ</li>
+        <li>gogo.gsのマップでルート沿いのスタンドを確認</li>
+        <li>安いスタンドを選んでスタンド名をコピー</li>
+        <li>このアプリに戻って「ナビ開始」をタップ</li>
+      </ol>
+    </section>
+
+    <!-- 価格メモ（オフライン用） -->
+    <section class="card" id="card-memo">
+      <div class="card-label">📝 価格メモ（自分用）</div>
+      <div id="memo-list"></div>
+      <button class="btn-add-memo" onclick="openMemoModal()">+ 今日の価格を記録する</button>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── MEMO MODAL ── -->
+<div class="overlay" id="overlay" onclick="closeOverlay(event)">
+  <div class="mbox">
+    <div class="mtitle">📝 給油メモ</div>
+    <div class="mfield">
+      <label>スタンド名</label>
+      <input class="minput" id="m-name" type="text" placeholder="ENEOS ○○SS">
+    </div>
+    <div class="mrow2">
+      <div class="mfield">
+        <label>価格 (円/L)</label>
+        <input class="minput large" id="m-price" type="number" min="100" max="300" placeholder="168">
+      </div>
+      <div class="mfield">
+        <label>給油量 (L)</label>
+        <input class="minput large" id="m-liter" type="number" min="1" max="200" placeholder="30">
+      </div>
+    </div>
+    <div class="mfield">
+      <label>メモ</label>
+      <input class="minput" id="m-note" type="text" placeholder="高速道路の手前など">
+    </div>
+    <div class="mbtns">
+      <button class="mbtn-cancel" onclick="closeOverlayDirect()">キャンセル</button>
+      <button class="mbtn-save" onclick="saveMemo()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
