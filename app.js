@@ -7,29 +7,11 @@ let memos = JSON.parse(localStorage.getItem('gb_memos') || '[]');
 
 /* ── INIT ── */
 window.addEventListener('DOMContentLoaded', () => {
-  // スプラッシュ表示後にアプリを表示
-  setTimeout(() => {
-    document.getElementById('splash').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-  }, 1200);
-
+  // 位置取得完了後にスプラッシュを消す（最大3秒待つ）
   getLocation();
   renderMemos();
 
-  // 目的地入力のクリアボタン制御
-  const destInput = document.getElementById('dest-input');
-  destInput.addEventListener('input', () => {
-    document.getElementById('dest-clear').style.display =
-      destInput.value ? 'block' : 'none';
-  });
 
-  // Enterキーでそのままgogo.gs起動
-  destInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') openGogoGS();
-  });
-  document.getElementById('station-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') openMapsNav();
-  });
 });
 
 /* ── 位置情報取得 ── */
@@ -43,10 +25,19 @@ function getLocation() {
     return;
   }
 
+  const showApp = () => {
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+  };
+  // 最大3秒でスプラッシュを強制終了
+  const splashTimer = setTimeout(showApp, 3000);
+
   navigator.geolocation.getCurrentPosition(
     pos => {
       myLat = pos.coords.latitude;
       myLng = pos.coords.longitude;
+      clearTimeout(splashTimer);
+      showApp();
       // 逆ジオコーディング（nominatim 無料API）
       fetch(`https://nominatim.openstreetmap.org/reverse?lat=${myLat}&lon=${myLng}&format=json&accept-language=ja`)
         .then(r => r.json())
@@ -61,6 +52,8 @@ function getLocation() {
         });
     },
     err => {
+      clearTimeout(splashTimer);
+      showApp();
       dot.classList.add('error');
       switch(err.code) {
         case 1: text.textContent = '位置情報の許可が必要です'; break;
@@ -69,7 +62,7 @@ function getLocation() {
         default: text.textContent = '位置情報エラー';
       }
     },
-    { timeout: 10000, maximumAge: 60000, enableHighAccuracy: true }
+    { timeout: 15000, maximumAge: 10000, enableHighAccuracy: true }
   );
 }
 
@@ -96,27 +89,12 @@ function openGogoGS() {
 
 /* ── gogo.gs 現在地周辺 ── */
 function openGogoGSNearby() {
-  // 先にウィンドウを開いておく（ユーザー操作と直結させてブロック回避）
-  const win = window.open('', '_blank');
-  showToast('現在地を取得中…');
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      myLat = pos.coords.latitude;
-      myLng = pos.coords.longitude;
-      const url = `https://gogo.gs/map/?lat=${myLat}&lng=${myLng}&fuel=1&zoom=14`;
-      win.location.href = url;
-    },
-    () => {
-      if (myLat && myLng) {
-        const url = `https://gogo.gs/map/?lat=${myLat}&lng=${myLng}&fuel=1&zoom=14`;
-        win.location.href = url;
-      } else {
-        win.location.href = 'https://gogo.gs/';
-        showToast('位置情報を取得できませんでした', 'red');
-      }
-    },
-    { timeout: 10000, maximumAge: 0, enableHighAccuracy: true }
-  );
+  if (myLat && myLng) {
+    const url = `https://gogo.gs/map/?lat=${myLat}&lng=${myLng}&fuel=1&zoom=14`;
+    window.open(url, '_blank');
+  } else {
+    showToast('位置情報を取得中…再度タップしてください', 'red');
+  }
 }
 
 /* ── 目的地クリア ── */
