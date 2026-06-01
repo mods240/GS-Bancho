@@ -10,6 +10,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // 位置取得完了後にスプラッシュを消す（最大3秒待つ）
   getLocation();
   renderMemos();
+  showBanner();
 
 
 });
@@ -208,6 +209,65 @@ function showToast(msg, type = 'green') {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── INSTALL BANNER ── */
+let deferredPrompt = null;
+
+// Android Chrome: インストールプロンプトを保持
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showBanner();
+});
+
+// すでにインストール済みなら非表示
+window.addEventListener('appinstalled', () => {
+  hideBanner();
+});
+
+function showBanner() {
+  // スタンドアロン（インストール済み）なら表示しない
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  // 一度閉じたら24時間は表示しない
+  const closed = localStorage.getItem('gb_banner_closed');
+  if (closed && Date.now() - parseInt(closed) < 86400000) return;
+
+  setTimeout(() => {
+    document.getElementById('install-banner').classList.add('show');
+  }, 2000);
+
+  // iPhoneの場合はボタンをSafari案内に変更
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (isIOS) {
+    document.getElementById('btn-install').textContent = '方法を見る';
+    document.getElementById('btn-install').onclick = showIOSGuide;
+  } else {
+    document.getElementById('btn-install').onclick = androidInstall;
+  }
+}
+
+function hideBanner() {
+  document.getElementById('install-banner').classList.remove('show');
+}
+
+function closeBanner() {
+  hideBanner();
+  localStorage.setItem('gb_banner_closed', Date.now());
+}
+
+function androidInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      hideBanner();
+    });
+  }
+}
+
+function showIOSGuide() {
+  showToast('Safari下部の共有ボタン→ホーム画面に追加');
 }
 
 /* ── UTILS ── */
