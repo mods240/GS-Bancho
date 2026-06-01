@@ -5,103 +5,142 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#080b10">
 <title>ガス番長</title>
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=M+PLUS+1:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- ── SPLASH ── -->
 <div id="splash">
+  <div class="splash-eyebrow">FUEL FINDER</div>
   <div class="splash-logo">ガス<em>番長</em></div>
-  <div class="splash-sub">ルート上の最安スタンドを探す</div>
-  <div class="splash-spinner"></div>
+  <div class="splash-sub">ROUTE · PRICE · NAVIGATE</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
 </div>
 
 <!-- ── APP ── -->
 <div id="app" class="hidden">
 
-  <!-- Header -->
   <header>
-    <div class="logo">ガス<em>番長</em></div>
-    <div id="loc-pill" class="loc-pill">
+    <div class="logo">
+      ガス<em>番長</em>
+      <span class="logo-badge">FUEL FINDER</span>
+    </div>
+    <div class="loc-pill">
       <span class="loc-dot"></span>
       <span id="loc-text">位置取得中…</span>
     </div>
   </header>
 
-  <!-- Main card -->
   <main>
 
-    <!-- Step 1: 目的地入力 -->
-    <section class="card" id="card-dest">
-      <div class="card-label">STEP 1 — 目的地</div>
-      <div class="input-row">
-        <input id="dest-input" type="text" placeholder="例：大阪城、名古屋駅、東京タワー"
-          autocomplete="off" autocorrect="off" spellcheck="false">
-        <button id="dest-clear" class="btn-icon" onclick="clearDest()" style="display:none">✕</button>
+    <!-- STEP 1: 目的地 -->
+    <section class="card">
+      <div class="section-label">
+        <span class="section-num">01</span>
+        <span class="section-title">目的地を入力</span>
+        <span class="section-line"></span>
       </div>
-      <div class="hint">※ 地名・住所・ランドマーク何でも可</div>
+      <div class="input-wrap">
+        <span class="input-icon">🗺</span>
+        <input id="dest-input" type="text"
+          placeholder="大阪城、名古屋駅、東京タワー…"
+          autocomplete="off" autocorrect="off" spellcheck="false">
+        <button id="dest-clear" class="btn-clear" onclick="clearDest()">✕</button>
+      </div>
+      <div class="hint">// 地名・住所・ランドマーク何でも可</div>
     </section>
 
-    <!-- Step 2: アクションボタン -->
+    <!-- STEP 2: 検索 -->
     <section class="action-area">
-      <!-- メインボタン：gogo.gs でルート検索 -->
-      <button class="btn-main" id="btn-gogogs" onclick="openGogoGS()">
-        <span class="btn-icon-lg">⛽</span>
-        <div>
-          <div class="btn-title">ルート上の最安値を探す</div>
-          <div class="btn-desc">gogo.gs で価格マップを開く</div>
+      <div class="section-label" style="margin-bottom:6px">
+        <span class="section-num">02</span>
+        <span class="section-title">最安値を検索</span>
+        <span class="section-line"></span>
+      </div>
+      <button class="btn-main" onclick="openGogoGS()">
+        <span class="btn-main-icon">⛽</span>
+        <div class="btn-main-body">
+          <div class="btn-main-title">ルート上の最安値を探す</div>
+          <div class="btn-main-desc">gogo.gs → 価格マップを開く</div>
         </div>
-        <span class="btn-arrow">›</span>
+        <span class="btn-main-arrow">›</span>
       </button>
-
-      <!-- サブボタン：現在地周辺だけ -->
       <button class="btn-sub" onclick="openGogoGSNearby()">
         <span>📍</span> 現在地周辺だけ見る
       </button>
     </section>
 
-    <!-- Step 3: スタンド決まったらナビ -->
-    <section class="card" id="card-nav">
-      <div class="card-label">STEP 2 — スタンドが決まったら</div>
-      <div class="nav-input-row">
-        <input id="station-input" type="text" placeholder="スタンド名 or 住所を入力"
-          autocomplete="off">
-        <button class="btn-nav-go" onclick="openMapsNav()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    <!-- STEP 3: ナビ -->
+    <section class="card">
+      <div class="section-label">
+        <span class="section-num">03</span>
+        <span class="section-title">ナビ起動</span>
+        <span class="section-line"></span>
+      </div>
+      <div class="nav-row">
+        <div class="input-wrap" style="flex:1">
+          <span class="input-icon">⛽</span>
+          <input id="station-input" type="text"
+            placeholder="スタンド名 or 住所"
+            autocomplete="off">
+        </div>
+        <button class="btn-nav" onclick="openMapsNav()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           ナビ開始
         </button>
       </div>
-      <div class="hint">gogo.gsで選んだスタンド名をここに入れてナビへ</div>
+      <div class="hint">// gogo.gsで選んだスタンド名をここに貼り付け</div>
     </section>
 
-    <!-- Tips -->
-    <section class="tips-card">
-      <div class="tips-title">💡 使い方のコツ</div>
-      <ol class="tips-list">
-        <li>目的地を入れて「最安値を探す」をタップ</li>
-        <li>gogo.gsのマップでルート沿いのスタンドを確認</li>
-        <li>安いスタンドを選んでスタンド名をコピー</li>
-        <li>このアプリに戻って「ナビ開始」をタップ</li>
-      </ol>
+    <!-- TIPS -->
+    <section class="card">
+      <div class="section-label">
+        <span class="section-num" style="font-size:1rem;color:var(--gold)">TIP</span>
+        <span class="section-title">使い方</span>
+        <span class="section-line"></span>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-item">
+          <span class="tip-num">1</span>
+          <span class="tip-text">目的地を入れて最安値を探す</span>
+        </div>
+        <div class="tip-item">
+          <span class="tip-num">2</span>
+          <span class="tip-text">マップでルート沿いを確認</span>
+        </div>
+        <div class="tip-item">
+          <span class="tip-num">3</span>
+          <span class="tip-text">スタンド名をコピー</span>
+        </div>
+        <div class="tip-item">
+          <span class="tip-num">4</span>
+          <span class="tip-text">戻ってナビ開始をタップ</span>
+        </div>
+      </div>
     </section>
 
-    <!-- 価格メモ（オフライン用） -->
-    <section class="card" id="card-memo">
-      <div class="card-label">📝 価格メモ（自分用）</div>
+    <!-- 価格メモ -->
+    <section class="card">
+      <div class="section-label">
+        <span class="section-num" style="font-size:1rem;color:var(--muted)">REC</span>
+        <span class="section-title">価格メモ</span>
+        <span class="section-line"></span>
+      </div>
       <div id="memo-list"></div>
-      <button class="btn-add-memo" onclick="openMemoModal()">+ 今日の価格を記録する</button>
+      <button class="btn-add-memo" onclick="openMemoModal()">＋ 今日の価格を記録</button>
     </section>
 
   </main>
 </div>
 
-<!-- ── MEMO MODAL ── -->
+<!-- ── MODAL ── -->
 <div class="overlay" id="overlay" onclick="closeOverlay(event)">
   <div class="mbox">
+    <div class="mbox-handle"></div>
     <div class="mtitle">📝 給油メモ</div>
     <div class="mfield">
       <label>スタンド名</label>
