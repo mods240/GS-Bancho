@@ -267,7 +267,7 @@ function androidInstall() {
 }
 
 function showIOSGuide() {
-  showToast('Safari下部の共有ボタン→ホーム画面に追加');
+  alert('① SafariでこのページのURLを開く\n② 下部の共有ボタン（四角に矢印）をタップ\n③「ホーム画面に追加」を選ぶ\n\n※ Chrome・Firefoxでは追加できません');
 }
 
 /* ── UTILS ── */
