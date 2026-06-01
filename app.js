@@ -102,9 +102,9 @@ function openGogoGSNearby() {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
       myLat = lat; myLng = lng;
-      const url = `https://gogo.gs/map/?lat=${lat}&lng=${lng}&fuel=1&zoom=15`;
+      const url = `https://gogo.gs/map/?lat=${lat}&lng=${lng}&fuel=1&zoom=14&view=map`;
       window.open(url, '_blank');
-      showToast('現在地周辺を表示します');
+      showToast('マップを開きます');
     },
     () => {
       if (myLat && myLng) {
