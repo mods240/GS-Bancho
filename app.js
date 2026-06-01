@@ -96,14 +96,27 @@ function openGogoGS() {
 
 /* ── gogo.gs 現在地周辺 ── */
 function openGogoGSNearby() {
-  let url;
-  if (myLat && myLng) {
-    url = `https://gogo.gs/map/?lat=${myLat}&lng=${myLng}&fuel=1&zoom=14`;
-  } else {
-    url = 'https://gogo.gs/';
-    showToast('位置情報を取得中です…', 'yellow');
-  }
-  window.open(url, '_blank');
+  // 先にウィンドウを開いておく（ユーザー操作と直結させてブロック回避）
+  const win = window.open('', '_blank');
+  showToast('現在地を取得中…');
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      myLat = pos.coords.latitude;
+      myLng = pos.coords.longitude;
+      const url = `https://gogo.gs/map/?lat=${myLat}&lng=${myLng}&fuel=1&zoom=14`;
+      win.location.href = url;
+    },
+    () => {
+      if (myLat && myLng) {
+        const url = `https://gogo.gs/map/?lat=${myLat}&lng=${myLng}&fuel=1&zoom=14`;
+        win.location.href = url;
+      } else {
+        win.location.href = 'https://gogo.gs/';
+        showToast('位置情報を取得できませんでした', 'red');
+      }
+    },
+    { timeout: 10000, maximumAge: 0, enableHighAccuracy: true }
+  );
 }
 
 /* ── 目的地クリア ── */
